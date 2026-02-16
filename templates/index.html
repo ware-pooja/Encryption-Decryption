@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CyberVault - Secure Encryption</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <canvas id="matrix"></canvas>
+    <div class="overlay"></div>
+    
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">
+                <i class="fas fa-shield-alt"></i>
+                CyberVault
+            </h1>
+            <div class="status">STATUS: <span class="status-online">ONLINE</span></div>
+        </div>
+    </header>
+
+    <main class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'success' if category == 'success' else 'error' }}">
+                        <i class="fas {{ 'fa-check-circle' if category == 'success' else 'fa-exclamation-triangle' }}"></i>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="grid">
+            <!-- TEXT ENCRYPTION -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-font"></i>
+                    <h2>Text Encryption</h2>
+                </div>
+                <form method="POST">
+                    {{ text_form.hidden_tag() }}
+                    <div class="form-group">
+                        <label>{{ text_form.text.label }}</label>
+                        {{ text_form.text(class="input", placeholder="Enter your secret message...") }}
+                    </div>
+                    <div class="form-group">
+                        <label>{{ text_form.password.label }}</label>
+                        {{ text_form.password(class="input", placeholder="Enter master password") }}
+                    </div>
+                    <div class="button-group">
+                        <button type="submit" name="action" value="encrypt" class="btn btn-primary">
+                            <i class="fas fa-lock"></i> Encrypt
+                        </button>
+                        <button type="submit" name="action" value="decrypt" class="btn btn-secondary">
+                            <i class="fas fa-lock-open"></i> Decrypt
+                        </button>
+                    </div>
+                </form>
+                
+                {% if result %}
+                <div class="result-section">
+                    <h3><i class="fas fa-copy"></i> Output</h3>
+                    <div class="result-container">
+                        <textarea readonly id="result">{{ result }}</textarea>
+                        <button onclick="copyResult()" class="btn-copy">
+                            <i class="fas fa-clipboard"></i>
+                        </button>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- FILE ENCRYPTION -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-file-archive"></i>
+                    <h2>File Encryption</h2>
+                </div>
+                <form method="POST" enctype="multipart/form-data">
+                    {{ file_form.hidden_tag() }}
+                    <div class="form-group">
+                        <label>{{ file_form.file.label }}</label>
+                        {{ file_form.file(class="input file-input") }}
+                    </div>
+                    <div class="form-group">
+                        <label>{{ file_form.password.label }}</label>
+                        {{ file_form.password(class="input", placeholder="Enter master password") }}
+                    </div>
+                    <div class="button-group">
+                        <button type="submit" name="file_action" value="encrypt" class="btn btn-primary">
+                            <i class="fas fa-lock"></i> Encrypt File
+                        </button>
+                        <button type="submit" name="file_action" value="decrypt" class="btn btn-secondary">
+                            <i class="fas fa-lock-open"></i> Decrypt File
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
